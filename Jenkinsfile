@@ -11,7 +11,7 @@ node {
             script {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     withCredentials([usernamePassword(credentialsId: 'JenkinsGithubCreds', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                        sh "git config user.email user@email.com"
+                        sh "git config user.email ${env.EMAIL}"
                         sh "git config user.name chilikm4n"
                         sh "cat vote-ui-deployment.yaml"
                         sh "sed -i 's+chiliphrosting/vote.*+chiliphrosting/vote:${DOCKERTAG}+g' vote-ui-deployment.yaml"
@@ -23,4 +23,18 @@ node {
     }
   }
 }
+
+ stage('Trigger deployment') {
+      agent any
+      environment{
+        def GIT_COMMIT = "${env.GIT_COMMIT}"
+      }
+      steps{
+        echo "${GIT_COMMIT}"
+        echo "triggering deployment"
+        // passing variables to job deployment run by vote-deploy repository Jenkinsfile
+        build job: 'deployment', parameters: [string(name: 'DOCKERTAG', value: GIT_COMMIT)]
+      }    
+   }
+
 }
