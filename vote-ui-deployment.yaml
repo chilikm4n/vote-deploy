@@ -10,11 +10,11 @@ spec:
       app: vote-ui
   template:
     metadata:
-    labels:
-      app: vote-ui
+      labels:
+        app: vote-ui
     spec:
       containers:
-   - image: docker.io/chiliphrosting/vote
+      - image: docker.io/xxxx/vote
         name: vote-ui
         ports:
         - containerPort: 80
